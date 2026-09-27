@@ -8,6 +8,7 @@ import {
 } from "./domain.js";
 import { agentTick, createAgentRuns } from "./agents.js";
 let stopping = false;
+let ingestController = new AbortController();
 const active = new Set<string>();
 async function locked(key: string, fn: () => Promise<void>) {
   if (active.has(key)) return;
@@ -167,6 +168,7 @@ async function ingest() {
       const response = await fetch(
         (process.env.GATEWAY_URL ?? "http://localhost:3100") +
           "/events?since=0",
+        { signal: ingestController.signal },
       );
       if (!response.ok || !response.body) throw new Error("SSE unavailable");
       const reader = response.body.getReader(),
@@ -640,6 +642,7 @@ async function sequenceTick(r: any) {
 }
 export async function startWorker() {
   stopping = false;
+  ingestController = new AbortController();
   await pool.query(
     "UPDATE sequence_run_steps s SET scheduled_at=now()+s.delay_seconds*interval '1 second' FROM sequence_runs r WHERE s.run_id=r.id AND r.status='running' AND s.index=r.current_step_index AND s.status='pending' AND s.client_msg_id IS NULL AND s.scheduled_at<now()",
   );
@@ -692,8 +695,13 @@ export async function startWorker() {
       busy = false;
     }
   }, 150);
-  return () => {
+  return async () => {
     stopping = true;
+    ingestController.abort();
     clearInterval(timer);
+    const deadline = Date.now() + 15000;
+    while ((busy || active.size) && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
   };
 }

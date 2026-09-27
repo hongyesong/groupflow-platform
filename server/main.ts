@@ -135,7 +135,7 @@ const stopMocks =
 const stopWorker = await startWorker();
 await app.listen({ port: Number(process.env.PORT ?? 3000), host: "0.0.0.0" });
 const shutdown = async () => {
-  stopWorker();
+  await stopWorker();
   await app.close();
   if (stopMocks) await stopMocks();
   await pool.end();
