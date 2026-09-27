@@ -1,0 +1,43 @@
+{
+  "name": "groupflow-platform",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch server/main.ts",
+    "start": "tsx server/main.ts",
+    "migrate": "tsx server/migrate.ts",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:api": "node tests/api.integration.mjs",
+    "test:e2e": "playwright test",
+    "dev:web": "vite"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/static": "^10.1.5",
+    "@fastify/websocket": "^11.0.2",
+    "@vitejs/plugin-react": "^4.5.0",
+    "ajv": "^8.17.1",
+    "dotenv": "^16.5.0",
+    "fastify": "^5.3.3",
+    "pg": "^8.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsx": "^4.19.4",
+    "vite": "^6.3.5",
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^22.15.0",
+    "@types/pg": "^8.15.0",
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.6",
+    "@types/ssh2": "^1.15.6",
+    "@types/ws": "^8.18.1",
+    "ssh2": "^1.17.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,20 @@
+[Unit]
+Description=GroupFlow HTTP console and backend
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=groupflow
+Group=groupflow
+WorkingDirectory=/project/groupflow-platform
+Environment=NODE_ENV=production
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/local/bin/node --import tsx server/main.ts
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
