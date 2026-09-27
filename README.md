@@ -1,103 +1,17 @@
 # GroupFlow
 
-多账号群组消息平台的最小实现：React 18 控制台、Node.js/TypeScript 后端、PostgreSQL，以及可演示的消息网关与 Agent 模拟服务。
+多账号群组消息平台的最小实现：React 18 控制台、Node.js/TypeScript 后端、PostgreSQL
 
-不依赖 Docker、Redis 或外部消息队列。API、定时任务和模拟服务由一个 Node.js 进程启动。真实网关和 Agent 可通过环境变量替换。
+## 快速访问
 
-## 快速运行
+默认访问 `http://173.212.205.66:8080/`
 
-需要 Node.js 24 和 PostgreSQL 17。先创建独立数据库用户和数据库，例如在 PostgreSQL 管理员会话中执行：
-
-```sql
-CREATE USER groupflow WITH PASSWORD 'replace-with-your-password';
-CREATE DATABASE groupflow OWNER groupflow;
-```
-
-复制 `.env.example` 为 `.env`，修改 `DATABASE_URL`，然后：
-
-```bash
-npm ci
-npm run migrate
-npm run build
-npm start
-```
-
-默认访问 `http://localhost:3000`。首次迁移生成六个服务账号、一个示例序列以及演示登录用户：
-
-| 用户   | 密码   | 权限         |
-| ------ | ------ | ------------ |
-| admin  | admin  | 管理与写操作 |
-| viewer | viewer | 只读         |
-
-开发时运行 `npm run dev`；前端热更新另开终端运行 `npm run dev:web`。
-
-## 环境变量
-
-| 变量                  | 含义                                              |
-| --------------------- | ------------------------------------------------- |
-| PORT                  | HTTP 端口，默认 3000                              |
-| DATABASE_URL          | PostgreSQL 连接串，仅后端使用                     |
-| GATEWAY_URL           | 网关 HTTP 地址，模拟器为 `http://127.0.0.1:3100`  |
-| AGENT_URL             | Agent HTTP 地址，模拟器为 `http://127.0.0.1:3200` |
-| MOCK_SERVICES         | `true` 启动内置模拟服务；真实服务时设为 `false`   |
-| AGENT_TURN_TIMEOUT_MS | Agent 单轮超时，默认 12000 毫秒                   |
-
-HTTP API 位于 `/api`，WebSocket 位于 `/ws`。模拟器仅监听本机，不向公网开放。数据库也只需本机监听。
-
-## 演示顺序
-
-1. 登录 admin，在账号管理中连接至少三个账号。
-2. 新建群：选择一个群主和两个成员，第一位成员自动提为管理员。
-3. 在群详情手动发送消息，观察排队、受理、已发送状态。
-4. 开启“自动应答 Agent”，点击“模拟用户发言”，查看回复与 Agent 步骤。
-5. 打开定时序列，选择群与模板，填写变量，预检后启动。
-6. 使用 viewer 登录，可查看数据，但没有写入按钮，直接调用写 API 也会得到 403。
-
-序列 `stepVars` 示例：`{"2":{"location":"新资料地址"}}`。覆盖从该步骤起生效，空字符串表示不改变之前的值。
-
-## 简洁验证
-
-```bash
-npm run typecheck
-npm run build
-npm test
-```
-
-启动应用后，可额外执行一条核心 API 流程：
-
-```bash
-npm run test:api
-```
-
-该测试会生成演示群和消息，验证权限、建群、去重、504 核对、限流、序列预检/并发互斥、Agent 幂等和会话撤销。请对演示数据库运行。
-
-浏览器测试为两条：管理员查看消息与 Agent 步骤、viewer 不显示写按钮。先执行 API 测试生成示例数据，再运行：
-
-```bash
-npx playwright install chromium
-npm run test:e2e
-```
-
-远程验证通过 `TEST_BASE_URL` 指定服务地址。PowerShell：`$env:TEST_BASE_URL='http://你的服务器:8080'`；Linux：`TEST_BASE_URL=http://你的服务器:8080 npm run test:api`。
-
-## 原生服务器部署
-
-1. 安装 Node.js 和 PostgreSQL；创建应用数据库和用户。
-2. 将仓库放到 `/project/groupflow-platform`，创建 `.env`，将 `PORT` 设为需要的端口（当前演示部署使用 8080）。
-3. 执行 `npm ci && npm run migrate && npm run build`。
-4. 创建只用于运行应用的系统用户 `groupflow`，确保它可读取项目及 `.env`。
-5. 复制 `deploy/groupflow.service` 到 `/etc/systemd/system/`，根据服务器安装位置调整路径。
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now groupflow
-sudo systemctl status groupflow
-sudo journalctl -u groupflow -n 50 --no-pager
-```
-
-更新代码后执行 `npm ci && npm run typecheck && npm run build && npm run migrate`，再 `sudo systemctl restart groupflow`。数据库迁移可重复运行，schema 版本不匹配时应用拒绝启动。
-
-`scripts/remote.mjs` 是可选 SSH 上传工具，凭据仅通过 `SSH_HOST`、`SSH_USER`、`SSH_PASSWORD` 环境变量传入，不保存到仓库；一般使用 Git 拉取或普通 SFTP 即可。
+演示数据库：
+主机	173.212.205.66
+端口	15434
+数据库	groupflow
+用户名	groupflow
+密码	efc48e0973b9c84db9844f72cc5a1864f100fe0b4d6d0eb1
 
 ## 代码位置
 
