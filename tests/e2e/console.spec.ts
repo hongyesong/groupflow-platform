@@ -11,7 +11,12 @@ test("admin can inspect messages and Agent steps", async ({ page }) => {
     .getByRole("button", { name: "群组与消息", exact: false })
     .first()
     .click();
-  await page.locator(".group-list>button").first().click();
+  const groups = page.locator(".group-list>button");
+  for (let i = 0; i < await groups.count(); i++) {
+    const loaded = page.waitForResponse(r => r.url().includes("/agent-runs") && r.request().method() === "GET");
+    await groups.nth(i).click();
+    if ((await (await loaded).json()).length) break;
+  }
   await expect(page.getByRole("heading", { name: "消息时间线" })).toBeVisible();
   await expect(page.locator(".message-bubble").first()).toBeVisible();
   await page.getByRole("button", { name: "查看步骤" }).first().click();

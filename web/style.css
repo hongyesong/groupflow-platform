@@ -117,7 +117,7 @@ b {
 }
 .app {
   display: flex;
-  min-width: 1080px;
+  min-width: 0;
   min-height: 100vh;
 }
 aside {
@@ -208,6 +208,7 @@ nav .nav-active {
   background: #35a986;
 }
 .main {
+  min-width: 0;
   margin-left: 232px;
   width: calc(100% - 232px);
 }
@@ -513,7 +514,7 @@ td {
 }
 .group-layout {
   display: grid;
-  grid-template-columns: 210px 1fr;
+  grid-template-columns: 210px minmax(0, 1fr);
   gap: 20px;
   align-items: start;
 }
@@ -672,7 +673,7 @@ td {
 }
 .sequence-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px;
 }
 .padded .panel-title {
@@ -929,4 +930,136 @@ footer span {
   border-radius: 7px;
   margin-top: 23px;
   line-height: 2;
+}
+
+/* Keep wide data inside its own scroll region, including keyboard navigation. */
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.table-scroll:focus-visible {
+  outline: 2px solid #147d6c;
+  outline-offset: -2px;
+}
+.table-scroll table { min-width: 540px; }
+.panel, .stat, .group-card, .hint-grid > div { min-width: 0; }
+.modal { max-width: calc(100% - 32px); }
+.modal-backdrop { padding: 16px 0; }
+.modal, .group-card, .member-line, .run-summary, .step-card {
+  overflow-wrap: anywhere;
+}
+label > input, label > select, label > textarea { min-width: 0; max-width: 100%; }
+
+@media (max-width: 1100px) {
+  aside { width: 196px; padding: 24px 14px; }
+  .main { margin-left: 196px; width: calc(100% - 196px); }
+  main { padding: 26px 22px; }
+  header { padding: 0 22px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .group-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hint-grid { gap: 12px; }
+  .group-layout { grid-template-columns: 170px minmax(0, 1fr); gap: 14px; }
+  .settings { flex-wrap: wrap; gap: 10px; }
+  .login-story { padding: 40px 32px; }
+  .login-story h1 { font-size: 36px; }
+  .login-form { width: min(330px, calc(100% - 40px)); }
+}
+
+@media (max-width: 767px) {
+  .app { display: block; min-height: 100dvh; }
+  aside {
+    position: static;
+    width: 100%;
+    padding: 16px 16px 10px;
+    border-right: 0;
+    border-bottom: 1px solid #e5ebec;
+  }
+  aside .brand { font-size: 22px; }
+  .workspace, .nav-caption, .sidebar-bottom small { display: none; }
+  nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    margin-top: 16px;
+  }
+  nav button {
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 2px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  nav [aria-current="page"] { background: #eaf5f0; color: #147d6c; }
+  .sidebar-bottom { margin-top: 10px; padding: 10px 0 0; }
+  .main { margin-left: 0; width: 100%; }
+  header { height: auto; min-height: 56px; padding: 10px 16px; gap: 8px; flex-wrap: wrap; }
+  header > div { gap: 8px; flex-wrap: wrap; }
+  header > span b { padding: 0 5px; }
+  main { padding: 24px 16px; min-height: auto; }
+  h1 { font-size: 24px; }
+  .page-heading { align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 22px; }
+  .page-heading > div { flex: 1 1 230px; }
+  .eyebrow { font-size: 9px; }
+  button, .actions button, .text-button { min-height: 44px; }
+  input:not([type="checkbox"]), select, textarea,
+  .composer input, .composer select, .sequence-layout textarea, .modal textarea {
+    font-size: 16px;
+  }
+  input:not([type="checkbox"]), select { min-height: 44px; }
+  .stats { gap: 10px; margin-bottom: 20px; }
+  .stat { padding: 15px 12px; }
+  .stat strong { font-size: 29px; margin: 10px 0; }
+  .stat i { width: 25px; height: 25px; font-size: 13px; }
+  .stat small { line-height: 1.7; display: block; }
+  .group-cards, .hint-grid, .sequence-layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .group-cards { padding: 16px; }
+  .hint-grid { margin-top: 20px; }
+  .panel-title { padding: 16px; gap: 10px; flex-wrap: wrap; }
+  .panel-title h3 { min-width: 0; overflow-wrap: anywhere; }
+  .group-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .group-list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 145px;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 14px;
+  }
+  .group-list h3 { grid-column: 1 / -1; margin: 0 0 4px; }
+  .group-list > button { grid-row: 2; margin: 0; padding: 12px; }
+  .group-list > p { grid-row: 2; }
+  .member-line { padding: 16px; gap: 10px; }
+  .settings { padding: 10px 16px; }
+  .settings label { min-height: 44px; margin: 0; }
+  .settings button { margin-left: 0; }
+  .message-list { padding: 16px 12px; max-height: 55dvh; }
+  .message { max-width: 94%; min-width: 0; }
+  .message-meta { flex-wrap: wrap; gap: 4px 10px; overflow-wrap: anywhere; }
+  .composer { display: grid; grid-template-columns: minmax(0, 1fr) auto; padding: 12px; }
+  .composer select { grid-column: 1 / -1; max-width: none; width: 100%; }
+  .composer input { width: 100%; }
+  .padded, .run-summary { padding: 16px; }
+  .step-card { padding: 16px; gap: 10px; }
+  .run-summary h3 { flex-wrap: wrap; }
+  .sequence-step { padding: 12px; }
+  .alert, .notice, .job-bar { flex-wrap: wrap; overflow-wrap: anywhere; }
+  th, td { padding: 12px; }
+  .actions button { white-space: nowrap; font-size: 12px; }
+  footer { padding: 18px 16px; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  footer span { float: none; }
+  .modal, .modal.wide { width: calc(100% - 24px); max-width: none; padding: 20px 16px; max-height: calc(100dvh - 32px); }
+  .check-list { grid-template-columns: minmax(0, 1fr); }
+  .check-list label { min-height: 44px; flex-wrap: wrap; }
+  .modal-actions { flex-wrap: wrap; }
+  .modal-actions button { flex: 1; }
+  .login { grid-template-columns: minmax(0, 1fr); min-height: 100dvh; }
+  .login-story { padding: 24px; gap: 24px; }
+  .login-story h1 { font-size: 28px; margin-bottom: 0; }
+  .login-story p, .story-dots, .login-story > small { display: none; }
+  .login-story:after { pointer-events: none; opacity: 0.3; }
+  .login-story > div { position: relative; z-index: 1; }
+  .login-form { width: min(400px, calc(100% - 40px)); padding: 30px 0; }
+  .login-form > .muted { margin-bottom: 24px; }
 }

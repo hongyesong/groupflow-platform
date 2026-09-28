@@ -363,7 +363,7 @@ function App() {
           </div>
         </div>
         <div className="nav-caption">工作空间</div>
-        <nav>
+        <nav aria-label="主导航">
           {[
             ["overview", "◫", "工作台概览"],
             ["accounts", "◎", "账号管理"],
@@ -373,6 +373,7 @@ function App() {
             <button
               key={key}
               className={page === key ? "nav-active" : ""}
+              aria-current={page === key || (page === "agent" && key === "groups") ? "page" : undefined}
               onClick={() => setPage(key)}
             >
               <span>{icon}</span>
@@ -539,7 +540,7 @@ function App() {
                 </h3>
                 <span className="muted">账号状态由服务端实时维护</span>
               </div>
-              <table>
+              <div className="table-scroll" role="region" aria-label="数据表格，可横向滚动" tabIndex={0}><table>
                 <thead>
                   <tr>
                     <th>账号</th>
@@ -626,7 +627,7 @@ function App() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             </div>
           )}
           {page === "groups" && (
@@ -858,7 +859,7 @@ function App() {
                       <span className="muted">{runs.length} 条记录</span>
                     </div>
                     {runs.length ? (
-                      <table>
+                      <div className="table-scroll" role="region" aria-label="数据表格，可横向滚动" tabIndex={0}><table>
                         <thead>
                           <tr>
                             <th>运行</th>
@@ -885,7 +886,7 @@ function App() {
                             </tr>
                           ))}
                         </tbody>
-                      </table>
+                      </table></div>
                     ) : (
                       <p className="muted padded">
                         开启自动应答后，外部消息会触发 Agent。
@@ -897,7 +898,7 @@ function App() {
                 <div className="panel empty">
                   <span>▤</span>
                   <h3>选择一个群组</h3>
-                  <p>在左侧选择群组查看消息与运行记录。</p>
+                  <p>选择群组查看消息与运行记录。</p>
                 </div>
               )}
             </div>
@@ -1162,7 +1163,7 @@ function App() {
                   {s.delaySeconds} 秒
                 </h3>
                 <p>{s.text}</p>
-                <table>
+                <div className="table-scroll" role="region" aria-label="数据表格，可横向滚动" tabIndex={0}><table>
                   <thead>
                     <tr>
                       <th>变量</th>
@@ -1179,7 +1180,7 @@ function App() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></div>
               </div>
             ))}
             <div className="modal-actions">
